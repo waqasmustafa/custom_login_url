@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="res_config_settings_view_form_custom_login_url" model="ir.ui.view">
+    <field name="name">res.config.settings.view.form.custom.login.url</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.view_res_config_settings"/>
+    <field name="arch" type="xml">
+      <xpath expr="//div[@id='settings']//div[hasclass('settings')]" position="inside">
+        <div class="app_settings_block" string="Custom Login URL">
+          <h2>Custom Login URL</h2>
+          <div class="row mt16 o_settings_container">
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="custom_login_enabled"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="custom_login_enabled"/>
+                <div class="text-muted">
+                  Hide default <code>/web</code> and <code>/web/login</code> for public users. Use a private custom login path instead.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <div class="d-flex align-items-center" style="gap:6px;">
+                  <field name="custom_login_base_url" readonly="1" class="oe_inline"/>
+                  <field name="custom_login_slug" placeholder="go/signin" class="oe_inline"/>
+                </div>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="custom_login_slug"/>
+                <div class="text-muted">
+                  Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
+                  Changes apply instantly via redirect; no restart required.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="custom_login_block_mode"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="custom_login_block_mode"/>
+                <div class="text-muted">
+                  Choose how to block public access to <code>/web</code> and <code>/web/login</code>.
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-6 o_setting_box">
+              <div class="o_setting_left_pane">
+                <field name="custom_login_preview_url" readonly="1"/>
+              </div>
+              <div class="o_setting_right_pane">
+                <label for="custom_login_preview_url"/>
+                <div class="text-muted">Full login URL preview</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </xpath>
+    </field>
+  </record>
+</odoo>
