@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
-from odoo.addons.http_routing.models.ir_http import slugify
 
 def _slug_sanitize(slug: str) -> str:
     slug = (slug or "").strip().strip("/")
