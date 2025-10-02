@@ -10,7 +10,7 @@
           <div class="row mt16 o_settings_container">
             <div class="col-12 col-lg-6 mb-3">
               <label for="custom_login_enabled" class="me-2">
-                Hide Default /web & /web/login
+                Hide Default /web &amp; /web/login
               </label>
               <field name="custom_login_enabled"/>
               <div class="text-muted">
@@ -34,7 +34,7 @@
 
             <div class="col-12 col-lg-6 mb-3">
               <label for="custom_login_block_mode" class="me-2">
-                Block Mode for /web & /web/login
+                Block Mode for /web &amp; /web/login
               </label>
               <field name="custom_login_block_mode"/>
               <div class="text-muted">
