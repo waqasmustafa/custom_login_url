@@ -20,7 +20,8 @@ class ResConfigSettings(models.TransientModel):
     custom_login_slug = fields.Char(
         string="Custom Login Path (slug)",
         config_parameter="custom_login_url.slug",
-        help="Enter your custom login path (e.g., 'vault', 'admin-panel'). Changes apply instantly."
+        default="go/signin",
+        help="Example: 'go/signin' -> https://yourdomain.com/go/signin. Changing this requires an Odoo restart."
     )
     custom_login_block_mode = fields.Selection(
         [("404", "Return 404 on /web & /web/login"), ("redirect", "Redirect to /")],
@@ -29,80 +30,7 @@ class ResConfigSettings(models.TransientModel):
         default="404"
     )
 
-    custom_login_preview_url = fields.Char(
-        string="Login URL",
-        compute="_compute_custom_login_preview_url",
-        readonly=True
-    )
-
-    custom_login_base_url = fields.Char(
-        string="Base URL",
-        compute="_compute_custom_login_base_url",
-        readonly=True
-    )
-
     @api.onchange("custom_login_slug")
     def _onchange_custom_login_slug(self):
         if self.custom_login_slug:
             self.custom_login_slug = _slug_sanitize(self.custom_login_slug)
-
-    @api.depends("custom_login_slug")
-    def _compute_custom_login_preview_url(self):
-        base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
-        for rec in self:
-            if rec.custom_login_slug:
-                slug = _slug_sanitize(rec.custom_login_slug)
-                rec.custom_login_preview_url = (base.rstrip("/") + "/" + slug) if base else "/" + slug
-            else:
-                rec.custom_login_preview_url = "Enter a custom path above"
-
-    def _compute_custom_login_base_url(self):
-        for rec in self:
-            # Try to get the current website domain first, fallback to web.base.url
-            try:
-                website = self.env["website"].sudo().get_current_website()
-                if website and website.domain:
-                    base = f"https://{website.domain}/"
-                else:
-                    base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
-                    base = base.rstrip("/") + "/" if base else "/"
-            except Exception:
-                base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
-                base = base.rstrip("/") + "/" if base else "/"
-            rec.custom_login_base_url = base
-
-    def set_values(self):
-        res = super().set_values()
-        # Create or update Website Redirect to allow instant slug change without restart
-        if self.custom_login_enabled and self.custom_login_slug:
-            try:
-                WebsiteRedirect = self.env["website.redirect"].sudo()
-                website = self.env["website"].sudo().get_current_website()
-                source = "/" + _slug_sanitize(self.custom_login_slug)
-                target = "/_login_cloak"
-                # Look for existing redirect for login cloak
-                existing = WebsiteRedirect.search([
-                    ("website_id", "=", website.id if website else False),
-                    ("redirect_type", "=", "301"),
-                    ("url_from", "=", source),
-                ], limit=1)
-                # Remove any old redirects pointing to target but with different source
-                WebsiteRedirect.search([
-                    ("website_id", "=", website.id if website else False),
-                    ("url_to", "=", target),
-                    ("url_from", "!=", source),
-                ]).unlink()
-                if existing:
-                    existing.write({"url_to": target})
-                else:
-                    WebsiteRedirect.create({
-                        "website_id": website.id if website else False,
-                        "url_from": source,
-                        "url_to": target,
-                        "redirect_type": "301",
-                        "active": True,
-                    })
-            except Exception:
-                # If website module is not installed, ignore silently
-                pass
-        return res

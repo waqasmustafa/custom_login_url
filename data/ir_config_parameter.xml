@@ -7,8 +7,7 @@
     </record>
     <record id="param_cu_slug" model="ir.config_parameter">
       <field name="key">custom_login_url.slug</field>
-      <!-- No default slug - user must set their own -->
-      <field name="value"></field>
+      <field name="value">go/signin</field>
     </record>
     <record id="param_cu_block_mode" model="ir.config_parameter">
       <field name="key">custom_login_url.block_mode</field>

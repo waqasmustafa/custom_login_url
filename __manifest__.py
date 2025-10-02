@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Login Cloak – Hide Web/Login & Custom URL',
-    'summary': 'Hide /web & /web/login. Use a secret, configurable login URL.',
+    'name': 'Custom Login URL',
+    'summary': 'Hide default /web & /web/login and use a custom, secret login path.',
+    'version': '18.0.2.0.0',
     'description': '''
 Secure your Odoo by hiding the default login endpoints and exposing a private login URL of your choice.
 
@@ -20,16 +21,12 @@ Notes:
     'support': 'mustafawaqas0@gmail.com',
     'license': 'LGPL-3',
     'category': 'Tools',
-    'depends': ['base', 'web', 'website'],
+    'depends': ['web'],
     'data': [
         'data/ir_config_parameter.xml',
         'views/res_config_settings_view.xml',
     ],
     'assets': {},
-    'images': [
-        'static/description/banner.png',
-        'static/description/icon.png',
-    ],
     'installable': True,
     'application': False,
     'auto_install': False,
