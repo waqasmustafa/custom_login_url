@@ -14,13 +14,13 @@ def _cfg_bool(key, default=False):
 def _cfg_str(key, default=""):
     return (request.env["ir.config_parameter"].sudo().get_param(key) or default).strip()
 
-# Fixed active path at import-time; change via settings needs restart
-ACTIVE_LOGIN_PATH = "/go/signin"
+# Fixed internal route used for instant changes via Website Redirect
+INTERNAL_LOGIN_PATH = "/_login_cloak"
 
 class CustomLoginURLController(http.Controller):
 
-    # Custom login form (GET)
-    @http.route(ACTIVE_LOGIN_PATH, type="http", auth="public", website=True, methods=["GET"])
+    # 1) Custom GET: show login form at INTERNAL_LOGIN_PATH (always available)
+    @http.route(INTERNAL_LOGIN_PATH, type="http", auth="public", website=True, methods=["GET"])
     def login_form_get(self, **kw):
         if not _cfg_bool("custom_login_url.enabled", False):
             # Feature disabled: fall back to the normal login
@@ -37,8 +37,8 @@ class CustomLoginURLController(http.Controller):
         })
         return request.render("web.login", qcontext)
 
-    # Custom login form (POST)
-    @http.route(ACTIVE_LOGIN_PATH, type="http", auth="public", website=True, methods=["POST"], csrf=True)
+    # 2) Custom POST: authenticate then redirect
+    @http.route(INTERNAL_LOGIN_PATH, type="http", auth="public", website=True, methods=["POST"], csrf=True)
     def login_form_post(self, **post):
         if not _cfg_bool("custom_login_url.enabled", False):
             return redirect("/web/login")
@@ -54,25 +54,15 @@ class CustomLoginURLController(http.Controller):
             pass
         return self.login_form_get(error=_("Wrong login/password"), login=login, redirect=redirect_to)
 
-    # Block default /web/login (both GET and POST) when enabled; otherwise defer to core
+    # 3) Block the default /web/login (GET & POST)
     @http.route("/web/login", type="http", auth="public", website=True, methods=["GET", "POST"])
     def block_default_login(self, **kw):
         if not _cfg_bool("custom_login_url.enabled", False):
-            # Feature off -> let core route handle by returning NotFound (so next route picks it up)
-            raise NotFound()
-        mode = _cfg_str("custom_login_url.block_mode", "404")
-        if mode == "redirect":
-            return redirect("/")
-        raise NotFound()
+            # If feature off, render normal login
+            q = request.env["ir.http"].sudo().get_frontend_menu_qcontext()
+            q.update({"databases": []})
+            return request.render("web.login", q)
 
-    # Guard /web: when enabled and public, block; otherwise defer to core
-    @http.route("/web", type="http", auth="public", website=True, methods=["GET"])
-    def guard_web_root(self, **kw):
-        if not _cfg_bool("custom_login_url.enabled", False):
-            # Let the native /web handler do its job (avoid recursion)
-            raise NotFound()
-        if request.session.uid:
-            return redirect("/web?debug=0")
         mode = _cfg_str("custom_login_url.block_mode", "404")
         if mode == "redirect":
             return redirect("/")

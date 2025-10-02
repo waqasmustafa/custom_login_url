@@ -14,7 +14,7 @@
               </label>
               <field name="custom_login_enabled"/>
               <div class="text-muted">
-                When enabled, public access to <code>/web</code> and <code>/web/login</code> is blocked, and the login form moves to your custom path.
+                Hide default <code>/web</code> and <code>/web/login</code> for public users. Use a private custom login path instead.
               </div>
             </div>
 
@@ -22,10 +22,13 @@
               <label for="custom_login_slug" class="me-2">
                 Custom Login Path (slug)
               </label>
-              <field name="custom_login_slug" placeholder="go/signin"/>
+              <div class="d-flex align-items-center" style="gap:6px;">
+                <field name="custom_login_base_url" readonly="1" class="oe_inline"/>
+                <field name="custom_login_slug" placeholder="Enter your custom path (e.g., vault)" class="oe_inline"/>
+              </div>
               <div class="text-muted">
-                Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
-                <b>Note:</b> Changing this requires an Odoo restart because routes are loaded at import time.
+                Example: <code>vault</code> → <code>https://yourdomain.com/vault</code><br/>
+                Changes apply instantly via redirect; no restart required.
               </div>
             </div>
 
@@ -37,6 +40,14 @@
               <div class="text-muted">
                 Choose how to block public access to <code>/web</code> and <code>/web/login</code>.
               </div>
+            </div>
+
+            <div class="col-12 col-lg-6 mb-3">
+              <label for="custom_login_preview_url" class="me-2">
+                Login URL Preview
+              </label>
+              <field name="custom_login_preview_url" readonly="1"/>
+              <div class="text-muted">Full login URL preview</div>
             </div>
           </div>
         </block>
