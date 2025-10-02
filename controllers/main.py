@@ -14,36 +14,15 @@ def _cfg_bool(key, default=False):
 def _cfg_str(key, default=""):
     return (request.env["ir.config_parameter"].sudo().get_param(key) or default).strip()
 
-def _import_time_slug(default="go/signin"):
-    """Best-effort read of the configured slug at import time.
-    Falls back to default if DB is not available yet.
-    """
-    try:
-        db_name = http.db_monodb() or odoo_config.get("db_name")
-        if not db_name:
-            return default
-        with api.Environment.manage():
-            with db_connect(db_name).cursor() as cr:
-                env = api.Environment(cr, SUPERUSER_ID, {})
-                val = env["ir.config_parameter"].sudo().get_param("custom_login_url.slug")
-                if val:
-                    return val
-    except Exception:
-        # Silently fall back to default during server start
-        pass
-    return default
-
-DEFAULT_SLUG = _import_time_slug("go/signin")
-ACTIVE_LOGIN_PATH = "/" + DEFAULT_SLUG.strip("/") if DEFAULT_SLUG else "/go/signin"
 # Fixed internal route used for instant changes via Website Redirect
 INTERNAL_LOGIN_PATH = "/_login_cloak"
 
 class CustomLoginURLController(http.Controller):
 
-    # 1) Custom GET: show login form at ACTIVE_LOGIN_PATH
-    @http.route([ACTIVE_LOGIN_PATH, INTERNAL_LOGIN_PATH], type="http", auth="public", website=True, methods=["GET"])
+    # 1) Custom GET: show login form at INTERNAL_LOGIN_PATH (always available)
+    @http.route(INTERNAL_LOGIN_PATH, type="http", auth="public", website=True, methods=["GET"])
     def login_form_get(self, **kw):
-        if not _cfg_bool("custom_login_url.enabled", True):
+        if not _cfg_bool("custom_login_url.enabled", False):
             # Feature disabled: fall back to the normal login
             return redirect("/web/login")
         if request.session.uid:
@@ -59,9 +38,9 @@ class CustomLoginURLController(http.Controller):
         return request.render("web.login", qcontext)
 
     # 2) Custom POST: authenticate then redirect
-    @http.route([ACTIVE_LOGIN_PATH, INTERNAL_LOGIN_PATH], type="http", auth="public", website=True, methods=["POST"], csrf=True)
+    @http.route(INTERNAL_LOGIN_PATH, type="http", auth="public", website=True, methods=["POST"], csrf=True)
     def login_form_post(self, **post):
-        if not _cfg_bool("custom_login_url.enabled", True):
+        if not _cfg_bool("custom_login_url.enabled", False):
             return redirect("/web/login")
         login = post.get("login")
         password = post.get("password")
@@ -78,7 +57,7 @@ class CustomLoginURLController(http.Controller):
     # 3) Block the default /web/login (GET & POST)
     @http.route("/web/login", type="http", auth="public", website=True, methods=["GET", "POST"])
     def block_default_login(self, **kw):
-        if not _cfg_bool("custom_login_url.enabled", True):
+        if not _cfg_bool("custom_login_url.enabled", False):
             # If feature off, render normal login
             q = request.env["ir.http"].sudo().get_frontend_menu_qcontext()
             q.update({"databases": []})

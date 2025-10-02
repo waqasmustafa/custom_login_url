@@ -57,9 +57,18 @@ class ResConfigSettings(models.TransientModel):
                 rec.custom_login_preview_url = "Enter a custom path above"
 
     def _compute_custom_login_base_url(self):
-        base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
-        base = base.rstrip("/") + "/" if base else "/"
         for rec in self:
+            # Try to get the current website domain first, fallback to web.base.url
+            try:
+                website = self.env["website"].sudo().get_current_website()
+                if website and website.domain:
+                    base = f"https://{website.domain}/"
+                else:
+                    base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
+                    base = base.rstrip("/") + "/" if base else "/"
+            except Exception:
+                base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
+                base = base.rstrip("/") + "/" if base else "/"
             rec.custom_login_base_url = base
 
     def set_values(self):
