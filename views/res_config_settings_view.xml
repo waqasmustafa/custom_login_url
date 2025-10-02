@@ -24,10 +24,10 @@
               </label>
               <div class="d-flex align-items-center" style="gap:6px;">
                 <field name="custom_login_base_url" readonly="1" class="oe_inline"/>
-                <field name="custom_login_slug" placeholder="go/signin" class="oe_inline"/>
+                <field name="custom_login_slug" placeholder="Enter your custom path (e.g., vault)" class="oe_inline"/>
               </div>
               <div class="text-muted">
-                Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
+                Example: <code>vault</code> → <code>https://yourdomain.com/vault</code><br/>
                 Changes apply instantly via redirect; no restart required.
               </div>
             </div>

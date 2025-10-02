@@ -29,10 +29,10 @@
 
 | Setting | Description | Default |
 |---------|-------------|---------|
-| **Hide Default /web & /web/login** | Enable/disable the feature | ✅ Enabled |
-| **Custom Login Path (slug)** | Your secret login path | `go/signin` |
+| **Hide Default /web & /web/login** | Enable/disable the feature | ❌ Disabled |
+| **Custom Login Path (slug)** | Your secret login path | Empty (user must set) |
 | **Block Mode** | How to block default routes | `404` |
-| **Login URL Preview** | Full generated URL | Auto-generated |
+| **Login URL Preview** | Full generated URL | "Enter a custom path above" |
 
 ### Block Modes
 
@@ -43,19 +43,24 @@
 
 ### 1. Basic Setup
 1. Go to **Settings → General Settings → Custom Login URL**
-2. Ensure "Hide Default /web & /web/login" is checked
-3. Set your custom slug (e.g., `vault`, `admin-panel`, `secure-login`)
+2. **Enable the feature**: Check "Hide Default /web & /web/login"
+3. **Set your custom path**: Enter your desired slug (e.g., `vault`, `admin-panel`, `secure-login`)
 4. Click **Save**
 
 ### 2. Access Your Login
 - **Your Login URL**: `https://yourdomain.com/your-slug`
 - **Example**: If slug is `vault` → `https://yourdomain.com/vault`
 
-### 3. What Happens
+### 3. What Happens After Enabling
 - ✅ **Your custom URL**: Shows Odoo login form
 - ❌ **`/web/login`**: Returns 404 (or redirects to `/`)
 - ❌ **`/web`**: No login page exposed for public users
 - ✅ **`/web/assets`**: Still works (static files untouched)
+
+### 4. Default Behavior (When Disabled)
+- ✅ **`/web/login`**: Works normally (default Odoo login)
+- ✅ **`/web`**: Works normally
+- ❌ **Custom URL**: Not active until you enable and set a path
 
 ## 🔄 Instant URL Changes
 
@@ -66,17 +71,17 @@
 3. Old redirects are cleaned up automatically
 
 **Example Flow:**
-- Change slug from `go/signin` to `vault`
+- Change slug from `admin-panel` to `vault`
 - Save settings
 - `https://yourdomain.com/vault` works instantly
-- `https://yourdomain.com/go/signin` still works (redirects to `vault`)
+- `https://yourdomain.com/admin-panel` still works (redirects to `vault`)
 
 ## 🛡️ Security Best Practices
 
 ### Strong Slug Examples
 ```
-✅ Good: vault-2024, admin-panel, secure-login, my-company-access
-❌ Avoid: login, admin, signin, portal
+✅ Good: vault-2024, admin-panel, secure-login, my-company-access, private-entry
+❌ Avoid: login, admin, signin, portal, web, dashboard
 ```
 
 ### Additional Security
@@ -94,6 +99,7 @@
 - Check that all dependencies are met
 
 **Q: Custom URL shows 404**
+- Ensure the feature is enabled in Settings
 - Verify the slug is set correctly in Settings
 - Check that Website Redirects are working
 - Try accessing the internal route `/_login_cloak` directly
@@ -112,6 +118,12 @@ To temporarily disable the feature:
 1. Go to Settings → Custom Login URL
 2. Uncheck "Hide Default /web & /web/login"
 3. Save - now `/web/login` works normally
+
+### First-Time Setup
+When you first install the module:
+1. **Module is disabled by default** - `/web` and `/web/login` work normally
+2. **No default path set** - you must choose your own custom path
+3. **Enable when ready** - check the box and set your path when you want to activate the feature
 
 ## 📁 Module Structure
 
