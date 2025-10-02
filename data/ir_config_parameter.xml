@@ -3,12 +3,12 @@
   <data noupdate="1">
     <record id="param_cu_enabled" model="ir.config_parameter">
       <field name="key">custom_login_url.enabled</field>
-      <field name="value">True</field>
+      <field name="value">False</field>
     </record>
     <record id="param_cu_slug" model="ir.config_parameter">
       <field name="key">custom_login_url.slug</field>
-      <!-- Default slug. Because routes are declared at import time, changing this needs a server restart to take effect. -->
-      <field name="value">go/signin</field>
+      <!-- No default slug; user must set it in Settings. -->
+      <field name="value"></field>
     </record>
     <record id="param_cu_block_mode" model="ir.config_parameter">
       <field name="key">custom_login_url.block_mode</field>
