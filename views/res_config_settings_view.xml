@@ -23,8 +23,8 @@
                 Custom Login Path (slug)
               </label>
               <div class="d-flex align-items-center" style="gap:6px;">
-                <field name="custom_login_base_url" readonly="1" class="oe_inline" attrs="{'invisible': [('custom_login_enabled','=',False)]}"/>
-                <field name="custom_login_slug" placeholder="go/signin" class="oe_inline" attrs="{'readonly': [('custom_login_enabled','=',False)]}"/>
+                <field name="custom_login_base_url" readonly="1" class="oe_inline"/>
+                <field name="custom_login_slug" placeholder="go/signin" class="oe_inline"/>
               </div>
               <div class="text-muted">
                 Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
@@ -36,7 +36,7 @@
               <label for="custom_login_block_mode" class="me-2">
                 Block Mode for /web &amp; /web/login
               </label>
-              <field name="custom_login_block_mode" attrs="{'readonly': [('custom_login_enabled','=',False)]}"/>
+              <field name="custom_login_block_mode"/>
               <div class="text-muted">
                 Choose how to block public access to <code>/web</code> and <code>/web/login</code>.
               </div>
@@ -46,7 +46,7 @@
               <label for="custom_login_preview_url" class="me-2">
                 Login URL Preview
               </label>
-              <field name="custom_login_preview_url" readonly="1" attrs="{'invisible': [('custom_login_enabled','=',False)]}"/>
+              <field name="custom_login_preview_url" readonly="1"/>
               <div class="text-muted">Full login URL preview</div>
             </div>
           </div>

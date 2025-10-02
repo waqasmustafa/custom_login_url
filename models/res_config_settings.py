@@ -19,7 +19,7 @@ class ResConfigSettings(models.TransientModel):
     custom_login_slug = fields.Char(
         string="Custom Login Path (slug)",
         config_parameter="custom_login_url.slug",
-        default=False,
+        default="go/signin",
         help="Example: 'go/signin' -> https://yourdomain.com/go/signin. Changing this requires an Odoo restart."
     )
     custom_login_block_mode = fields.Selection(
@@ -50,8 +50,8 @@ class ResConfigSettings(models.TransientModel):
     def _compute_custom_login_preview_url(self):
         base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
         for rec in self:
-            slug = _slug_sanitize(rec.custom_login_slug or "")
-            rec.custom_login_preview_url = ((base.rstrip("/") + "/" + slug) if base else ("/" + slug)) if slug else ""
+            slug = _slug_sanitize(rec.custom_login_slug or "go/signin")
+            rec.custom_login_preview_url = (base.rstrip("/") + "/" + slug) if base else "/" + slug
 
     def _compute_custom_login_base_url(self):
         base = self.env["ir.config_parameter"].sudo().get_param("web.base.url") or ""
@@ -61,20 +61,11 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         res = super().set_values()
-        # Create or update Website Redirect only if feature is enabled and slug is set
+        # Create or update Website Redirect to allow instant slug change without restart
         try:
             WebsiteRedirect = self.env["website.redirect"].sudo()
             website = self.env["website"].sudo().get_current_website()
-            enabled = bool(self.custom_login_enabled)
-            slug_val = _slug_sanitize(self.custom_login_slug or "")
-            if not enabled or not slug_val:
-                # Remove any existing redirects pointing to our internal target
-                WebsiteRedirect.search([
-                    ("website_id", "=", website.id if website else False),
-                    ("url_to", "=", "/_login_cloak"),
-                ]).unlink()
-                return res
-            source = "/" + slug_val
+            source = "/" + _slug_sanitize(self.custom_login_slug or "go/signin")
             target = "/_login_cloak"
             # Look for existing redirect for login cloak
             existing = WebsiteRedirect.search([
