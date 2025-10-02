@@ -3,50 +3,43 @@
   <record id="res_config_settings_view_form_custom_login_url" model="ir.ui.view">
     <field name="name">res.config.settings.view.form.custom.login.url</field>
     <field name="model">res.config.settings</field>
-    <field name="inherit_id" ref="base.view_res_config_settings"/>
+    <field name="inherit_id" ref="base.res_config_settings_view_form"/>
     <field name="arch" type="xml">
-      <xpath expr="//div[@id='settings']//div[hasclass('settings')]" position="inside">
-        <div class="app_settings_block" string="Custom Login URL">
-          <h2>Custom Login URL</h2>
+      <xpath expr="//block[@id='user_default_rights']" position="before">
+        <block title="Custom Login URL" id="custom_login_url_setting_block">
           <div class="row mt16 o_settings_container">
-            <div class="col-12 col-lg-6 o_setting_box">
-              <div class="o_setting_left_pane">
-                <field name="custom_login_enabled"/>
-              </div>
-              <div class="o_setting_right_pane">
-                <label for="custom_login_enabled"/>
-                <div class="text-muted">
-                  When enabled, public access to <code>/web</code> and <code>/web/login</code> is blocked, and the login form moves to your custom path.
-                </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <label for="custom_login_enabled" class="me-2">
+                Hide Default /web &amp; /web/login
+              </label>
+              <field name="custom_login_enabled"/>
+              <div class="text-muted">
+                When enabled, public access to <code>/web</code> and <code>/web/login</code> is blocked, and the login form moves to your custom path.
               </div>
             </div>
 
-            <div class="col-12 col-lg-6 o_setting_box">
-              <div class="o_setting_left_pane">
-                <field name="custom_login_slug" placeholder="go/signin"/>
-              </div>
-              <div class="o_setting_right_pane">
-                <label for="custom_login_slug"/>
-                <div class="text-muted">
-                  Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
-                  <b>Note:</b> Changing this requires an Odoo restart because routes are loaded at import time.
-                </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <label for="custom_login_slug" class="me-2">
+                Custom Login Path (slug)
+              </label>
+              <field name="custom_login_slug" placeholder="go/signin"/>
+              <div class="text-muted">
+                Example: <code>go/signin</code> → <code>https://yourdomain.com/go/signin</code><br/>
+                <b>Note:</b> Changing this requires an Odoo restart because routes are loaded at import time.
               </div>
             </div>
 
-            <div class="col-12 col-lg-6 o_setting_box">
-              <div class="o_setting_left_pane">
-                <field name="custom_login_block_mode"/>
-              </div>
-              <div class="o_setting_right_pane">
-                <label for="custom_login_block_mode"/>
-                <div class="text-muted">
-                  Choose how to block public access to <code>/web</code> and <code>/web/login</code>.
-                </div>
+            <div class="col-12 col-lg-6 mb-3">
+              <label for="custom_login_block_mode" class="me-2">
+                Block Mode for /web &amp; /web/login
+              </label>
+              <field name="custom_login_block_mode"/>
+              <div class="text-muted">
+                Choose how to block public access to <code>/web</code> and <code>/web/login</code>.
               </div>
             </div>
           </div>
-        </div>
+        </block>
       </xpath>
     </field>
   </record>
