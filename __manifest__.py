@@ -33,5 +33,5 @@ Notes:
     'installable': True,
     'application': False,
     'auto_install': False,
-    'post_init_hook': 'post_init_hook',
+    'post_init_hook': 'custom_login_url.hooks:post_init_hook',
 }
